@@ -2,9 +2,11 @@
   "name": "imgtest",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "electron/main.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "electron": "electron ."
   },
   "keywords": [],
   "author": "",
@@ -12,5 +14,8 @@
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
   }
 }
