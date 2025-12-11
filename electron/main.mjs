@@ -2,7 +2,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { processWebtoon } from "./processor.mjs";
+import { processWebtoon, splitSegment } from "./processor.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,6 +44,14 @@ ipcMain.handle("process-webtoon", async (_event, { inputDir, outputDir }) => {
   const finalOutput = outputDir || path.join(inputDir, "images_output");
   const files = await processWebtoon({ inputDir, outputDir: finalOutput });
   return { outputDir: finalOutput, files };
+});
+
+ipcMain.handle("split-segment", async (_event, { filePath, breakpoint }) => {
+  if (!filePath || typeof breakpoint !== "number") {
+    throw new Error("filePath and breakpoint are required.");
+  }
+  const files = await splitSegment({ filePath, breakpointPx: breakpoint });
+  return { files };
 });
 
 function createWindow() {

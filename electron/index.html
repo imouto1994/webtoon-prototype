@@ -95,6 +95,70 @@
       .segment a:hover {
         text-decoration: underline;
       }
+      #editorModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+      }
+      #editorModal.open {
+        display: flex;
+      }
+      .modal-content {
+        background: #161920;
+        border: 1px solid #1f2530;
+        border-radius: 12px;
+        padding: 16px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .editor-canvas {
+        position: relative;
+        border: 1px solid #1f2530;
+        border-radius: 8px;
+        background: #0f1115;
+        max-height: 70vh;
+        overflow: auto;
+      }
+      .editor-canvas img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .drag-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #7bd88f;
+        cursor: row-resize;
+      }
+      .drag-handle {
+        position: absolute;
+        right: 8px;
+        top: -6px;
+        background: #7bd88f;
+        color: #0f1115;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: grab;
+        user-select: none;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .modal-actions button {
+        padding: 10px 14px;
+      }
     </style>
   </head>
   <body>
@@ -125,6 +189,21 @@
         <div id="grid"></div>
       </section>
     </main>
+    <div id="editorModal">
+      <div class="modal-content">
+        <div id="editorInfo"></div>
+        <div class="editor-canvas" id="editorCanvas">
+          <img id="editorImage" alt="Segment preview" />
+          <div class="drag-line" id="dragLine">
+            <div class="drag-handle" id="dragHandle">Drag</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="cancelEdit">Cancel</button>
+          <button id="saveEdit">Save Split</button>
+        </div>
+      </div>
+    </div>
     <script type="module" src="./renderer.mjs"></script>
   </body>
 </html>

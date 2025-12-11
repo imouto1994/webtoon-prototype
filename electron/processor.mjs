@@ -44,6 +44,40 @@ export async function processWebtoon({ inputDir, outputDir }) {
   return written;
 }
 
+/**
+ * Splits a single output segment at the given breakpoint (px from top).
+ * Returns paths to the two new files and removes the original file.
+ */
+export async function splitSegment({ filePath, breakpointPx }) {
+  const meta = await sharp(filePath).metadata();
+  if (!meta.width || !meta.height) {
+    throw new Error("Unable to read image metadata.");
+  }
+  const height = meta.height;
+  const width = meta.width;
+  if (breakpointPx <= 0 || breakpointPx >= height) {
+    throw new Error("Breakpoint must be within the image bounds.");
+  }
+
+  const dir = path.dirname(filePath);
+  const { name, ext } = path.parse(filePath);
+  const stamp = Date.now();
+  const outA = path.join(dir, `${name}_${stamp}_a${ext}`);
+  const outB = path.join(dir, `${name}_${stamp}_b${ext}`);
+
+  await sharp(filePath)
+    .extract({ left: 0, top: 0, width, height: breakpointPx })
+    .toFile(outA);
+
+  await sharp(filePath)
+    .extract({ left: 0, top: breakpointPx, width, height: height - breakpointPx })
+    .toFile(outB);
+
+  await fs.rm(filePath, { force: true });
+
+  return [outA, outB];
+}
+
 async function readImagePaths(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   return entries

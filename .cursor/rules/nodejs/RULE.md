@@ -1,3 +1,8 @@
+---
+description: This rule should be followed when we are working with Javascript / Typescript files used in NodeJS environment
+alwaysApply: false
+---
+
 ## General
 
 - Follow best practices, lean towards agile methodologies
