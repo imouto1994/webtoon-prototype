@@ -7,6 +7,7 @@ const outputPathEl = document.querySelector("#outputPath");
 const statusEl = document.querySelector("#status");
 const resultSummaryEl = document.querySelector("#resultSummary");
 const resultListEl = document.querySelector("#resultList");
+const gridEl = document.querySelector("#grid");
 
 const api = window.webtoonApi;
 if (!api) {
@@ -45,17 +46,15 @@ processBtn.addEventListener("click", async () => {
   setStatus("Processing…");
   resultSummaryEl.textContent = "";
   resultListEl.innerHTML = "";
+  gridEl.innerHTML = "";
 
   try {
     const res = await api.process({ inputDir, outputDir });
     const { files, outputDir: resolvedOutput } = res;
     setStatus(`Done. Wrote ${files.length} files.`, "ok");
     resultSummaryEl.textContent = `Output folder: ${resolvedOutput}`;
-    files.forEach((file) => {
-      const li = document.createElement("li");
-      li.textContent = file;
-      resultListEl.append(li);
-    });
+    renderList(files);
+    renderGrid(files);
   } catch (err) {
     console.error(err);
     setStatus(`Error: ${err.message}`, "error");
@@ -71,4 +70,39 @@ function setStatus(message, mode = "info") {
   };
   statusEl.style.color = colors[mode] ?? colors.info;
   statusEl.textContent = message;
+}
+
+function renderList(files) {
+  resultListEl.innerHTML = "";
+  files.forEach((file) => {
+    const li = document.createElement("li");
+    li.textContent = file;
+    resultListEl.append(li);
+  });
+}
+
+function renderGrid(files) {
+  gridEl.innerHTML = "";
+  files.forEach((file, idx) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "segment";
+
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.src = `file://${file}`;
+    img.alt = `Segment ${idx}`;
+
+    const footer = document.createElement("footer");
+    const meta = document.createElement("span");
+    meta.textContent = `#${idx}`;
+
+    const link = document.createElement("a");
+    link.href = `file://${file}`;
+    link.download = file.split("/").pop();
+    link.textContent = "Open";
+
+    footer.append(meta, link);
+    wrapper.append(img, footer);
+    gridEl.append(wrapper);
+  });
 }

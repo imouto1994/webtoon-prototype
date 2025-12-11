@@ -6,4 +6,3 @@ contextBridge.exposeInMainWorld("webtoonApi", {
   pickOutput: () => ipcRenderer.invoke("pick-output"),
   process: (payload) => ipcRenderer.invoke("process-webtoon", payload),
 });
-
