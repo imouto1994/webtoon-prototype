@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 
-const MIN_GAP_HEIGHT = 30;
+const MIN_GAP_HEIGHT = 100;
 const COLOR_TOLERANCE = 10;
 
 /**
@@ -70,7 +70,12 @@ export async function splitSegment({ filePath, breakpointPx }) {
     .toFile(outA);
 
   await sharp(filePath)
-    .extract({ left: 0, top: breakpointPx, width, height: height - breakpointPx })
+    .extract({
+      left: 0,
+      top: breakpointPx,
+      width,
+      height: height - breakpointPx,
+    })
     .toFile(outB);
 
   await fs.rm(filePath, { force: true });
@@ -81,7 +86,9 @@ export async function splitSegment({ filePath, breakpointPx }) {
 async function readImagePaths(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   return entries
-    .filter((entry) => entry.isFile() && /\.(png|jpe?g)$/i.test(entry.name))
+    .filter(
+      (entry) => entry.isFile() && /\.(png|webp|jpe?g)$/i.test(entry.name)
+    )
     .map((entry) => path.join(dir, entry.name))
     .sort((a, b) =>
       path.basename(a).localeCompare(path.basename(b), undefined, {
